@@ -7,10 +7,10 @@ Rule of thumb: if you only ever need ONE of something (gameBoard, displayControl
 If you need multiples of something (players!), create them with factories.
 */
 
-//const tiles = Array.from(document.querySelectorAll(".cell"));
+const tiles = Array.from(document.querySelectorAll(".cell"));
 
-const btn = document.querySelector('button');
-const input = document.querySelector('input');
+// const btn = document.querySelector('button');
+// const input = document.querySelector('input');
 
 
 let board = ['','','','','','','','',''];
@@ -53,22 +53,29 @@ const winningConditions = [
 
 function play() {
 
-    btn.addEventListener('click', (e) => {
-        board[input.value] = currentPlayer.token;
-        console.table(board);
-        e.preventDefault();
-        //xSequence's last entry as 
-        // console.log(input.value);
-        // xSequence.push(input.value);
-        // xSequence.sort();
+    tiles.forEach((tile) => {
+        tile.addEventListener('click', (e) => {
 
-        // console.log(xSequence);
-        input.value = ''; 
+            if (tile.innerHTML === ''){
+                tile.innerHTML = currentPlayer.token;
+            } else {
+                alert(tile.innerHTML +' has already played in this tile! Try again');
+                togglePlayer();
+            }
 
-        win();
-        togglePlayer();
-        
-    });
+            board[tiles.indexOf(e.target)] = tile.innerHTML;
+            console.log(board);
+
+
+    
+            win();
+            togglePlayer();
+            
+        });
+
+    })
+
+    
 
 
 
@@ -80,13 +87,17 @@ function win(){
 
     winningConditions.forEach((condition) => {
         if ((board[condition[0]] === 'X' || board[condition[0]] === 'O')&& board[condition[0]] === board[condition[1]] && board[condition[1]] === board[condition[2]]){
-            console.log("you win!");
+            console.log(currentPlayer.token + " wins!");
+            
+
+
         }
 
     })
 
     
-        
+
+          
 }
 
 
