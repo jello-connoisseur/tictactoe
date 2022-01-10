@@ -7,110 +7,103 @@ Rule of thumb: if you only ever need ONE of something (gameBoard, displayControl
 If you need multiples of something (players!), create them with factories.
 */
 
-const tiles = Array.from(document.querySelectorAll(".cell"));
 
-// const btn = document.querySelector('button');
-// const input = document.querySelector('input');
-
-
-let board = ['','','','','','','','',''];
-
-
-function Player(token){
-    this.token = token;
+//player factory
+const Player = (num, token) => {
+    const getName = () => prompt(`what is player ${num}'s name?`);
+    //const pickToken = prompt(`pick player ${num}'s token'`);
+    return {num, getName, token};
 }
 
-let player1 = new Player('X');
-let player2 = new Player('O');
+const player1 = Player(1, 'X');
+const player2 = Player(2, 'O');
 let currentPlayer = player1;
 
-function togglePlayer(){
-    if (currentPlayer === player1){
-        currentPlayer = player2;
-    } else if(currentPlayer === player2){
-        currentPlayer = player1;
+const tiles = Array.from(document.querySelectorAll(".cell"));
+
+const gameBoard = (() => {
+
+    let board = [];
+    for (i=0; i< 9; i++){
+        board.push('');
     }
 
-}
+    tiles.forEach((tile) => {
+        tile.addEventListener('click', (e) => {
+            if (tile.innerHTML === ''){
+                tile.innerHTML = currentPlayer.token;
+            } else {
+                alert(tile.innerHTML +' has already played in this tile! Try again');
+                play.togglePlayer();
+            }
+            board[tiles.indexOf(e.target)] = tile.innerHTML; 
+            win();
+            play.togglePlayer();          
+        });
+    })
 
+    return{
+        board
+    };
+})();
 
 const winningConditions = [
     //row
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
-
     //column
     [0, 3, 6],
     [1, 4, 7], 
     [2, 5, 8], 
-
     //criss-cross
     [0, 4, 8],
-    [2, 4, 6],
-]
-
-
-function play() {
-
-    tiles.forEach((tile) => {
-        tile.addEventListener('click', (e) => {
-
-            if (tile.innerHTML === ''){
-                tile.innerHTML = currentPlayer.token;
-            } else {
-                alert(tile.innerHTML +' has already played in this tile! Try again');
-                togglePlayer();
-            }
-
-            board[tiles.indexOf(e.target)] = tile.innerHTML;
-            console.log(board);
-
-
-    
-            win();
-            togglePlayer();
-            
-        });
-
-    })
-
-    
-
-
-
-
-
-}
+    [2, 4, 6]
+];
 
 function win(){
-
     winningConditions.forEach((condition) => {
         if ((board[condition[0]] === 'X' || board[condition[0]] === 'O')&& board[condition[0]] === board[condition[1]] && board[condition[1]] === board[condition[2]]){
             console.log(currentPlayer.token + " wins!");
-            
-
-
         }
+    })        
+}
 
-    })
+const play = (() => {
+
 
     
 
-          
-}
+    function togglePlayer(){
+        if (currentPlayer === player1){
+            currentPlayer = player2;
+        } else if(currentPlayer === player2){
+            currentPlayer = player1;
+        }
+    
+    }
+
+    return{
+        win, 
+        togglePlayer
+    };
+})();
 
 
 
-/*
-if x's are aligned in a way that falls within winningConditions, the player wins
-
-use indexOf
-- indexOf(searchElement, fromIndex)
-*/
 
 
-play();
+
+
+
+
+
+
+
+
+
+
+
 
 
 
