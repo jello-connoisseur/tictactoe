@@ -1,13 +1,3 @@
-/*
-You’re going to store the gameboard as an array inside of a Gameboard object, so start there! 
-Your players are also going to be stored in objects… and you’re probably going to want an object to control the flow of the game itself.
-Your main goal here is to have as little global code as possible. 
-Try tucking everything away inside of a module or factory. 
-Rule of thumb: if you only ever need ONE of something (gameBoard, displayController), use a module. 
-If you need multiples of something (players!), create them with factories.
-*/
-
-
 //player factory
 const Player = (num, token) => {
     const getName = () => prompt(`what is player ${num}'s name?`);
@@ -37,9 +27,17 @@ const gameBoard = (() => {
                 play.togglePlayer();
             }
             board[tiles.indexOf(e.target)] = tile.innerHTML; 
-            win();
+            play.win();
             play.togglePlayer();          
         });
+    })
+
+    const btn = document.querySelector('button');
+    btn.addEventListener("click", () => {
+        play.winner.innerHTML = '';
+        tiles.forEach((tile) => {
+            tile.innerHTML = "";
+        })
     })
 
     return{
@@ -47,31 +45,29 @@ const gameBoard = (() => {
     };
 })();
 
-const winningConditions = [
-    //row
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    //column
-    [0, 3, 6],
-    [1, 4, 7], 
-    [2, 5, 8], 
-    //criss-cross
-    [0, 4, 8],
-    [2, 4, 6]
-];
 
-function win(){
-    winningConditions.forEach((condition) => {
-        if ((board[condition[0]] === 'X' || board[condition[0]] === 'O')&& board[condition[0]] === board[condition[1]] && board[condition[1]] === board[condition[2]]){
-            console.log(currentPlayer.token + " wins!");
-        }
-    })        
-}
 
 const play = (() => {
+    const winner = document.getElementById('winning-message-text');
 
-
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7], 
+        [2, 5, 8], 
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+    
+    function win(){
+        winningConditions.forEach((condition) => {
+            if ((gameBoard.board[condition[0]] === 'X'|| gameBoard.board[condition[0]] === 'O')&& gameBoard.board[condition[0]] === gameBoard.board[condition[1]] && gameBoard.board[condition[1]] === gameBoard.board[condition[2]] ){
+                winner.innerHTML = currentPlayer.token + " wins!";
+            }
+        })        
+    }
     
 
     function togglePlayer(){
@@ -84,7 +80,9 @@ const play = (() => {
     }
 
     return{
+        winningConditions,
         win, 
+        winner,
         togglePlayer
     };
 })();
